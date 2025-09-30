@@ -3,7 +3,8 @@ services:
   resources-ms:
     image: resources-image
     build:
-      context: resources-service
+      context: .
+      dockerfile: resources-service/Dockerfile
     ports:
       - 8080:8080
     restart: always
@@ -17,7 +18,8 @@ services:
   songs-ms:
     image: songs-image
     build:
-      context: songs-service
+      context: .
+      dockerfile: songs-service/Dockerfile
     ports:
       - 8081:8081
     restart: always
@@ -49,7 +51,8 @@ services:
   eureka-server:
     image: eureka-server-image
     build:
-      context: eureka
+      context: .
+      dockerfile: eureka/Dockerfile
     ports:
       - 8761:8761
     restart: always
