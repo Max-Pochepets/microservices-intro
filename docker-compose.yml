@@ -1,7 +1,7 @@
 # postgres --------------------------------------------------------------------
 services:
   resources-ms:
-    image: resources-image
+    image: resources-image:${SERVICE_TAG:-latest}
     build:
       context: .
       dockerfile: resources-service/Dockerfile
@@ -16,7 +16,7 @@ services:
       - eureka-server
 
   songs-ms:
-    image: songs-image
+    image: songs-image:${SERVICE_TAG:-latest}
     build:
       context: .
       dockerfile: songs-service/Dockerfile
@@ -29,7 +29,7 @@ services:
       - songs-db
       - eureka-server
   songs-db:
-    image: postgres
+    image: postgres:${PSQL_TAG:-latest}
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
@@ -38,7 +38,7 @@ services:
       - .env
     restart: always
   resources-db:
-    image: postgres
+    image: postgres:${PSQL_TAG:-latest}
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
