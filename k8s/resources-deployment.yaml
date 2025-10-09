@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: resources
-          image: resources-image
+          image: resources-image:1.0.0
           imagePullPolicy: IfNotPresent
           env:
             - name: RESOURCES_DB_URL

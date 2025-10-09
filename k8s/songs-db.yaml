@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       app: songs-db
+  serviceName: songs-db-service
   template:
     metadata:
       labels:
@@ -15,7 +16,7 @@ spec:
     spec:
       containers:
         - name: songs-db
-          image: postgres
+          image: postgres:13.20-alpine3.21
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /data

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: songs
-          image: songs-image
+          image: songs-image:1.0.0
           imagePullPolicy: IfNotPresent
           env:
             - name: SONGS_DB_URL
