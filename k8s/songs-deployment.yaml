@@ -6,6 +6,10 @@ metadata:
     app: songs
   namespace: microservices
 spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   replicas: 2
   selector:
     matchLabels:
@@ -19,7 +23,7 @@ spec:
     spec:
       containers:
         - name: songs
-          image: songs-image:1.0.0
+          image: songs-image:1.0.1
           imagePullPolicy: IfNotPresent
           env:
             - name: SONGS_DB_URL
@@ -30,6 +34,28 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+          startupProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            failureThreshold: 30
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/liveness
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/readiness
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 10
       volumes:
         - name: data
           persistentVolumeClaim:
