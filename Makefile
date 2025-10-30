@@ -16,6 +16,9 @@ kube-init:
 	kubectl config set-context --current --namespace=microservices
 
 kube-stop:
-	kubectl delete -f k8s/
+	$(MAKE) kube-del
 	echo "Y" | docker system prune -a
 	minikube stop
+
+kube-del:
+	kubectl delete -f k8s/
