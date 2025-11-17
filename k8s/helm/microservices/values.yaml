@@ -1,0 +1,25 @@
+namespace: microservices
+
+config:
+  app:
+    name: app-config
+  db:
+    name: db-config
+
+secret:
+  db:
+    name: db-creds
+
+songs:
+  name: songs
+  db:
+    replicas: 1
+  deployment:
+    replicas: 2
+
+resources:
+  name: resources
+  db:
+    replicas: 1
+  deployment:
+    replicas: 2
