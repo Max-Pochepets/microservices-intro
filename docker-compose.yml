@@ -16,7 +16,7 @@ services:
       - eureka-server
 
   songs-ms:
-    image: songs-image:1.0.1
+    image: songs-image:1.0.0
     build:
       context: .
       dockerfile: songs-service/Dockerfile

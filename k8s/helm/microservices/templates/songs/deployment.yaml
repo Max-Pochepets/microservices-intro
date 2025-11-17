@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-deployment" .Values.songs.name }}
+  labels:
+    app: {{ .Values.songs.name }}
+  namespace: {{ required "namespace is required!" .Values.namespace }}
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  replicas: {{ .Values.songs.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.songs.name }}
+  template:
+    metadata:
+      name: {{ .Values.songs.name }}
+      labels:
+        app: {{ .Values.songs.name }}
+      namespace: {{ required "namespace is required!" .Values.namespace }}
+    spec:
+      containers:
+        - name: {{ .Values.songs.name }}
+          image: songs-image:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SONGS_DB_URL
+              value: songs-db-service
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              name: data
+          startupProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            failureThreshold: 30
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/liveness
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/readiness
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ printf "%s-pvc" .Values.songs.name }}
+      restartPolicy: Always

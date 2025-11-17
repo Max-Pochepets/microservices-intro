@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ printf "%s-db" .Values.resources.name }}
+  namespace: {{ required "namespace is required!" .Values.namespace }}
+spec:
+  replicas: {{ .Values.resources.db.replicas }}
+  selector:
+    matchLabels:
+      app: {{ printf "%s-db" .Values.resources.name }}
+  serviceName: {{ printf "%s-db-service" .Values.resources.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ printf "%s-db" .Values.resources.name }}
+    spec:
+      containers:
+        - name: {{ printf "%s-db" .Values.resources.name }}
+          image: postgres:13.20-alpine3.21
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: postgres_pass
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: db
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - name: db-init
+              mountPath: /docker-entrypoint-initdb.d
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U postgres -d postgres
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U postgres -d postgres
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U postgres -d postgres
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: db-init
+          configMap:
+            name: {{ .Values.config.app.name }}
+            items:
+              - key: {{ printf "%s_init.sql" .Values.resources.name }}
+                path: {{ printf "%s_init.sql" .Values.resources.name }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
