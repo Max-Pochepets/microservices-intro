@@ -13,7 +13,7 @@ COPY ../resources-service/src/ resources-service/src/
 RUN ./gradlew :resources-service:clean :resources-service:build
 
 # Smaller OS footprint using JRE
-FROM openjdk:21
+FROM openjdk:21-rc-slim
 WORKDIR /app
 
 # Copy only the Jar from the current dir

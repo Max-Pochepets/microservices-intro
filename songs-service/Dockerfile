@@ -13,7 +13,7 @@ COPY ../songs-service/src/ songs-service/src/
 RUN ./gradlew :songs-service:clean :songs-service:build
 
 # Smaller OS footprint using JRE
-FROM openjdk:21
+FROM openjdk:21-rc-slim
 WORKDIR /app
 
 COPY --from=builder /gradle/build/songs-service/build/libs/*.jar /app/app.jar
