@@ -1,8 +1,9 @@
+{{ range $key, $app := .Values.apps }}
+{{ if eq $key "songs" }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ printf "%s-pv" .Values.songs.name }}
-  namespace: {{ required "namespace is required!" .Values.namespace }}
+  name: {{ printf "%s-pv" $key }}
 spec:
   capacity:
     storage: 1Gi
@@ -12,3 +13,5 @@ spec:
   storageClassName: manual
   hostPath:
     path: /mnt/data
+{{ end }}
+{{ end }}
