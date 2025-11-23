@@ -12,6 +12,13 @@ secrets:
 
 apps:
   songs:
+    ingress:
+      host: songs.edu
+      paths:
+        - /api/v1
+        - /api
+        - /v1
+        - /
     db:
       imageName: postgres
       imageTag: 13.20-alpine3.21
@@ -33,7 +40,6 @@ apps:
         failureThreshold: 3
     service:
       port: 80
-      nodePort: 30001
     deployment:
       imageName: songs-image
       imageTag: 1.0.0
@@ -56,6 +62,13 @@ apps:
         timeoutSeconds: 2
         failureThreshold: 10
   resources:
+    ingress:
+      host: resources.edu
+      paths:
+        - /api/v1
+        - /api
+        - /v1
+        - /
     db:
       imageName: postgres
       imageTag: 13.20-alpine3.21
@@ -77,7 +90,6 @@ apps:
         failureThreshold: 3
     service:
       port: 80
-      nodePort: 30000
     deployment:
       imageName: resources-image
       imageTag: 1.0.0

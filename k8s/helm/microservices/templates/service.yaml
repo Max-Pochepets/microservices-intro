@@ -8,11 +8,9 @@ metadata:
 spec:
   selector:
     app: {{ $key }}
+  type: ClusterIP
   ports:
-    - protocol: TCP
-      port: {{ $app.service.port }}
+    - port: {{ $app.service.port }}
       targetPort: {{ $app.deployment.port }}
-      nodePort: {{ $app.service.nodePort }}
-  type: NodePort
 ---
 {{ end }}
